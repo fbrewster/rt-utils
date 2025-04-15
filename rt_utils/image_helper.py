@@ -11,12 +11,12 @@ from pydicom.sequence import Sequence
 from rt_utils.utils import ROIData, SOPClassUID
 
 
-def load_sorted_image_series(dicom_series_path: str):
+def load_sorted_image_series(dicom_series_path: str, force: bool = False):
     """
     File contains helper methods for loading / formatting DICOM images and contours
     """
 
-    series_data = load_dcm_images_from_path(dicom_series_path)
+    series_data = load_dcm_images_from_path(dicom_series_path, force=force)
 
     if len(series_data) == 0:
         raise Exception("No DICOM Images found in input path")
@@ -27,12 +27,12 @@ def load_sorted_image_series(dicom_series_path: str):
     return series_data
 
 
-def load_dcm_images_from_path(dicom_series_path: str) -> List[Dataset]:
+def load_dcm_images_from_path(dicom_series_path: str, force: bool = False) -> List[Dataset]:
     series_data = []
     for root, _, files in os.walk(dicom_series_path):
         for file in files:
             try:
-                ds = dcmread(os.path.join(root, file))
+                ds = dcmread(os.path.join(root, file), force=force)
                 if hasattr(ds, "pixel_array"):
                     series_data.append(ds)
 
